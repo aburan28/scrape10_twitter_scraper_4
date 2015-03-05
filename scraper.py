@@ -7,11 +7,15 @@ import simplejson
 
 # retrieve a page
 base_url = 'http://search.twitter.com/search.json?q='
-q = 'neardeath'
+q = 'I'
 options = '&rpp=100&page='
 page = 1
+import collections
+cnt = collections.Counter()
+cnt['I'] += 1
 
 while 1:
+    q = cnt.popitem()
     try:
         url = base_url + q + options + str(page)
         html = scraperwiki.scrape(url)
@@ -21,6 +25,9 @@ while 1:
             data = {}
             data['id'] = result['id']
             data['text'] = result['text']
+            for word in data['text']:
+                cnt[word] += 1 
+                
             data['from_user'] = result['from_user']
             # save records to the datastore
             scraperwiki.datastore.save(["id"], data) 
